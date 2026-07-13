@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bus Pass Booking</title>
+    <style>
+        body {
+            background-color:rgb(191, 177, 141); /* Lavender */
+            color: black;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        .navbar {
+            background-color:rgb(223, 181, 17);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        .image-section {
+            flex: 1;
+            padding-right: 30px;
+        }
+
+        .image-section img {
+            width: 300px000px; 
+            height: 400px;
+            max-width: 3000px;
+            border-radius: 10px;
+        }
+
+        .form-section {
+            flex: 2;
+        }
+
+        form {
+            text-align: left;
+        }
+
+        input, select, button {
+            margin: 10px 0;
+            padding: 8px;
+            width: 100%;
+        }
+
+        .confirm-btn {
+            background-color:rgba(225, 205, 130, 0.9);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
+        .ticket {
+            background-color: #fff;
+            padding: 15px;
+            margin: 15px auto;
+            width: 60%;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .ticket-list {
+            margin: 20px auto;
+            padding: 20px;
+            background-color:rgb(228, 194, 108); /* Pink background */
+            width: 70%;
+            border-radius: 10px;
+        }
+    </style>
+    <script>
+        const prices = {{ routes | tojson }};
+        function updatePrice() {
+            const route = document.querySelector('select[name="route"]').value;
+            document.getElementById('price').innerText = prices[route] || 0;
+        }
+    </script>
+</head>
+<body>
+    <div class="navbar">Bus Pass Booking System</div>
+
+    <div class="main-content">
+        <div class="image-section">
+           <img src="https://media.istockphoto.com/id/614316294/photo/white-bus-driving-along-the-asphalt-road-at-sunset.jpg?s=612x612&w=0&k=20&c=u8GEy0RJSqL-VQGC2ERacrEo3LXc62O5VPopKTt38Sc=" alt=" ">
+        </div>
+        <div class="form-section">
+            <form method="POST">
+                <input type="text" name="name" placeholder="Enter your name" required>
+                <input type="text" name="mobile" placeholder="Enter your mobile number" required pattern="[0-9]{10}">
+                <select name="gender" required>
+                    <option value="">Select Gender</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                </select>
+                <select name="route" required onchange="updatePrice()">
+                    <option value="">Select a route</option>
+                    {% for route in routes %}
+                        <option value="{{ route }}">{{ route }}</option>
+                    {% endfor %}
+                </select>
+                <input type="date" name="date" required>
+                <p><strong>Price: ₹</strong><span id="price">0</span></p>
+                <button class="confirm-btn" type="submit">Confirm Ticket</button>
+            </form>
+        </div>
+    </div>
+
+    {% if message %}
+    <div class="ticket">
+        <h3>{{ message }}</h3>
+    </div>
+    {% endif %}
+
+    {% if latest_ticket %}
+    <div class="ticket">
+        <h3>Latest Ticket:</h3>
+        <p>{{ latest_ticket.name }} | {{ latest_ticket.mobile }} | {{ latest_ticket.gender }} | {{ latest_ticket.route }} | {{ latest_ticket.date }} | ₹{{ latest_ticket.price }}</p>
+    </div>
+    {% endif %}
+
+    <div class="ticket-list">
+        <h2>Confirmed Tickets:</h2>
+        {% for ticket in tickets %}
+            <p>{{ ticket.name }} | {{ ticket.mobile }} | {{ ticket.gender }} | {{ ticket.route }} | {{ ticket.date }} | ₹{{ ticket.price }}</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
